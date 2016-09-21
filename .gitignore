@@ -59,7 +59,6 @@ instance/
 
 # Scrapy stuff:
 .scrapy
-
 # Sphinx documentation
 docs/_build/
 
@@ -87,3 +86,4 @@ ENV/
 
 # Rope project settings
 .ropeproject
+.idea/
