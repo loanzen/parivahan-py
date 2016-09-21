@@ -3,9 +3,6 @@
 
 from setuptools import setup
 
-with open('README.md') as readme_file:
-    readme = readme_file.read()
-
 requirements = [
     "requests",
     "bs4",
@@ -14,9 +11,9 @@ requirements = [
 
 setup(
     name='parivahan-py',
-    version='0.1.0',
+    version='0.1.3',
     description="Get Vehicle Details from Registration Number from parivahan.gov site",
-    long_description=readme,
+    long_description=None,
     author="Suraj Arya",
     author_email='suraj@loanzen.in',
     url='https://github.com/suraj-arya/parivahan',

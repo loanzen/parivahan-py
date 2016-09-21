@@ -98,4 +98,4 @@ class ParivahanClient(object):
 
 if __name__ == '__main__':
     parivahan = ParivahanClient()
-    print parivahan.get_registration_details('KA05JH6942')
+    print parivahan.get_registration_details('XX00XX0000')
