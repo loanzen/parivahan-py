@@ -4,6 +4,15 @@
 ## Get Vehicle Details from Registration Number from parivahan.gov site
 
 
+### how to install
+
+```bash
+
+pip install -e git+https://github.com/loanzen/parivahan-py.git#egg=parivahan
+
+```
+
+
 ### how to use
 
 You can instantiate the ParivahanClient and then call the function for getting the registration details
@@ -11,8 +20,9 @@ like this
 
 ```python
 
-parivahan = ParivahanClient()
-print parivahan.get_registration_details('XX00XX0000')
+from parivahan import get_parivahan_data
+
+print get_parivahan_data('XX00XX0000')
 
 ```
 
