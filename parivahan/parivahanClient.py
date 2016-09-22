@@ -91,8 +91,14 @@ class ParivahanClient(object):
         for row in table_rows:
             table_columns = row.find_all('td')
             for i in xrange(0, len(table_columns), 2):
-                if table_columns[i] and table_columns[i+1]:
-                    data[table_columns[i].text] = table_columns[i+1].text
+                try:
+                    if table_columns[i] and table_columns[i+1]:
+                        key = table_columns[i].text.strip('\t\r\n ')
+                        val = table_columns[i+1].text.strip('\t\r\n ')
+                        data[key] = val
+                except Exception as e:
+                    print e.message
+                    continue
 
         return data
 

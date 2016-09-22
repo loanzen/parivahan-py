@@ -11,7 +11,7 @@ requirements = [
 
 setup(
     name='parivahan-py',
-    version='0.1.3',
+    version='0.1.4',
     description="Get Vehicle Details from Registration Number from parivahan.gov site",
     long_description=None,
     author="Suraj Arya",
