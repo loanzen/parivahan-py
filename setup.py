@@ -4,14 +4,14 @@
 from setuptools import setup
 
 requirements = [
-    "requests",
+    "mechanize",
     "bs4",
     "lxml"
 ]
 
 setup(
     name='parivahan-py',
-    version='0.1.4',
+    version='0.1.5',
     description="Get Vehicle Details from Registration Number from parivahan.gov site",
     long_description=None,
     author="Suraj Arya",

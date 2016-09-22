@@ -12,7 +12,8 @@ import mechanize
 
 def get_parivahan_data(registration_no):
 
-    clean = lambda x: "_".join(map(str, x.strip('\n\t\r: ').split()))
+    clean = lambda x: x.strip('\n\t\r: ')
+    join_with_underscore = lambda x: "_".join(clean(x).split())
 
     reg_match = re.match(r"([A-Za-z0-9]{6})([0-9]{1,4})", registration_no)
     if not reg_match:
@@ -22,7 +23,7 @@ def get_parivahan_data(registration_no):
     br.open('https://parivahan.gov.in/rcdlstatus/vahan/rcstatus.xhtml')
 
     br.select_form('convVeh_Form')
-    br.form['convVeh_Form:tf_reg_no1'] = reg_match.group(1)
+    br.form['convVeh_Form:tf_reg_no1'] = reg_match.group(1).upper()
     br.form['convVeh_Form:tf_reg_no2'] = reg_match.group(2)
 
     res = br.submit()
@@ -35,7 +36,7 @@ def get_parivahan_data(registration_no):
         for i in xrange(0, len(table_columns), 2):
             try:
                 if table_columns[i] and table_columns[i+1]:
-                    key = clean(table_columns[i].text)
+                    key = join_with_underscore(table_columns[i].text)
                     val = clean(table_columns[i+1].text)
 
                     if key == 'Registration_Date':
