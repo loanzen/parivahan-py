@@ -15,7 +15,7 @@ pip install -e git+https://github.com/loanzen/parivahan-py.git#egg=parivahan
 
 ### how to use
 
-You can instantiate the ParivahanClient and then call the function for getting the registration details
+You can call the function for getting the registration details
 like this
 
 ```python
@@ -23,6 +23,16 @@ like this
 from parivahan import get_parivahan_data
 
 print get_parivahan_data('XX00XX0000')
+
+```
+
+to get vehicle stolen status
+
+```python
+
+from parivahan import is_vehicle_stolen
+
+print is_vehicle_stolen('XX00XX0000')
 
 ```
 
