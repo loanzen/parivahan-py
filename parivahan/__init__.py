@@ -63,10 +63,10 @@ def is_vehicle_stolen(registration_no):
     vehicle_class = lambda xx: (filter(is_valid, xx) or [None])[0]
 
     registration_details = get_parivahan_data(registration_no)
-    owner = registration_details.get('Owner_Name')
-    chassis_no = registration_details.get('Chasi_No')
-    engine_no = registration_details.get('Engine_No')
-    vehicle_type = registration_details.get('Vehicle_Class')
+    owner = registration_details.get('owner_name')
+    chassis_no = registration_details.get('chasi_no')
+    engine_no = registration_details.get('engine_no')
+    vehicle_type = registration_details.get('vehicle_class')
 
     if None in (chassis_no, engine_no, vehicle_type, owner):
         raise Exception('Could not fetch required registration details from parivahan.')
