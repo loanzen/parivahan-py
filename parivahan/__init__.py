@@ -98,6 +98,7 @@ def is_vehicle_stolen(registration_no):
     # mechanize will take care of sending session cookies.
     res = br.open('http://164.100.44.112/vahansamanvay/InternetQueryOutput.aspx')
     soup = BeautifulSoup(res.get_data(), 'lxml')
+    panel = soup.find('div', id='Panel1')
     tables = soup.find_all('table')
     if not tables or len(tables) < 2:
         raise Exception('Unexpected page structure.')
@@ -109,10 +110,10 @@ def is_vehicle_stolen(registration_no):
 
     text = tr.find('td').text
     if text and 'has not been reported as stolen by police' in text:
-        return False, re.sub(r"[\r\n\t ]+", " ", text)
+        return False, re.sub(r"[\r\n\t ]+", " ", str(panel))
     else:
         # don't know what comes in the text for stolen vehicle
-        return True, re.sub(r"[\r\n\t ]+", " ", text)
+        return True, re.sub(r"[\r\n\t ]+", " ", str(panel))
 
 
 if __name__ == '__main__':
