@@ -15,7 +15,7 @@ def get_parivahan_data(registration_no):
     clean = lambda x: x.strip('\n\t\r: ')
     join_with_underscore = lambda x: "_".join(clean(x).split())
 
-    reg_match = re.match(r"([A-Za-z0-9]{6})([0-9]{1,4})", registration_no)
+    reg_match = re.match(r"([A-Za-z]{2}[0-9]{1,2}[A-Za-z]{1,3})([0-9]{1,4})", registration_no)
     if not reg_match:
         raise Exception('Registration number is not valid')
 
