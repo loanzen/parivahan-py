@@ -4,13 +4,21 @@
 from __future__ import absolute_import
 from __future__ import division
 
-from bs4 import BeautifulSoup
 from datetime import datetime
 import re
+from urllib2 import URLError
+
+from bs4 import BeautifulSoup
 import mechanize
 
 
-def get_parivahan_data(registration_no):
+class ParivahanTimeOutException(Exception):
+
+    def __int__(self, message):
+        super(ParivahanTimeOutException, self).__init__(message)
+
+
+def get_parivahan_data(registration_no, request_timeout=10):
 
     clean = lambda x: x.strip('\n\t\r: ')
     join_with_underscore = lambda x: "_".join(clean(x).split())
@@ -20,7 +28,11 @@ def get_parivahan_data(registration_no):
         raise Exception('Registration number is not valid')
 
     br = mechanize.Browser()
-    br.open('https://parivahan.gov.in/rcdlstatus/vahan/rcstatus.xhtml')
+    try:
+        br.open('https://parivahan.gov.in/rcdlstatus/vahan/rcstatus.xhtml',
+                timeout=request_timeout)
+    except URLError as e:
+        raise ParivahanTimeOutException(e.message)
 
     br.select_form('convVeh_Form')
     br.form['convVeh_Form:tf_reg_no1'] = reg_match.group(1).upper()
@@ -54,7 +66,7 @@ def get_parivahan_data(registration_no):
     return data
 
 
-def is_vehicle_stolen(registration_no):
+def is_vehicle_stolen(registration_no, request_timeout=10):
 
     # is_valid() checks if vehicle_type is a substring of vehicle types found on samanvay website
     # vehicle_class() gets a list of html select option and filters them who are `is_valid`
@@ -72,7 +84,11 @@ def is_vehicle_stolen(registration_no):
         raise Exception('Could not fetch required registration details from parivahan.')
 
     br = mechanize.Browser()
-    res = br.open('http://164.100.44.112/vahansamanvay/Internetquery.aspx')
+    try:
+        res = br.open('http://164.100.44.112/vahansamanvay/Internetquery.aspx',
+                      timeout=request_timeout)
+    except URLError as e:
+        raise ParivahanTimeOutException(e.message)
 
     try:
         #filter vehicle class
