@@ -28,6 +28,7 @@ def get_parivahan_data(registration_no, request_timeout=10):
         raise Exception('Registration number is not valid')
 
     br = mechanize.Browser()
+    br.set_handle_refresh(False)
     try:
         br.open('https://parivahan.gov.in/rcdlstatus/vahan/rcstatus.xhtml',
                 timeout=request_timeout)
