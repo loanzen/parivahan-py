@@ -18,6 +18,12 @@ class ParivahanTimeOutException(Exception):
         super(ParivahanTimeOutException, self).__init__(message)
 
 
+class ParivahanException(Exception):
+
+    def __int__(self, message):
+        super(ParivahanException, self).__init__(message)
+
+
 def get_parivahan_data(registration_no, request_timeout=10):
 
     clean = lambda x: x.strip('\n\t\r: ')
@@ -25,7 +31,7 @@ def get_parivahan_data(registration_no, request_timeout=10):
 
     reg_match = re.match(r"([A-Za-z]{2}[0-9]{1,2}[A-Za-z]{1,3})([0-9]{1,4})", registration_no)
     if not reg_match:
-        raise Exception('Registration number is not valid')
+        raise ParivahanException('Registration number is not valid')
 
     br = mechanize.Browser()
     br.set_handle_refresh(False)
