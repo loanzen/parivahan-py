@@ -103,9 +103,12 @@ def is_vehicle_stolen(registration_no, request_timeout=10):
                                                    'lxml').find('select',
                                                                 id='ddVehTypeName').find_all('option'))
         if vehicle_type is None:
-            raise Exception('No match.')
+            vehicle_type = '287   -5'  # this is for the option `CAR`.
+            # Vehicle class data from parivhan is not very reliable and does not correspond
+            # to the ones in samanvay dropdown list
+        else:
+            vehicle_type = vehicle_type.get('value')
 
-        vehicle_type = vehicle_type.get('value')
     except Exception as e:
         print "Couldn't determine vehicle type from the registration data. Error: {}".format(e.message)
 
