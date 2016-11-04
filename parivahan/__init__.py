@@ -8,8 +8,12 @@ from datetime import datetime
 import re
 from urllib2 import URLError
 
+import base64
 from bs4 import BeautifulSoup
+from captcha import CaptchaClient
 import mechanize
+import requests
+import time
 
 
 class ParivahanTimeOutException(Exception):
@@ -24,7 +28,20 @@ class ParivahanException(Exception):
         super(ParivahanException, self).__init__(message)
 
 
-def get_parivahan_data(registration_no, request_timeout=10):
+def _get_captcha(html, captcha_key):
+    soup = BeautifulSoup(html, 'lxml')
+    table = soup.find('table', **{'class': 'vahan-captcha'})
+    img = table.find('img')
+    captcha_url = 'https://parivahan.gov.in{}'.format(img.get('src'))
+    captcha_img = requests.get(captcha_url).content
+    captcha_client = CaptchaClient(captcha_key)
+
+    captcha_id = captcha_client.submit_captcha_b64(base64.b64encode(captcha_img))
+    time.sleep(6)
+    return captcha_client.get_solved_captcha(captcha_id)
+
+
+def get_parivahan_data(registration_no, captcha_api_key, request_timeout=10):
 
     clean = lambda x: x.strip('\n\t\r: ')
     join_with_underscore = lambda x: "_".join(clean(x).split())
@@ -36,20 +53,27 @@ def get_parivahan_data(registration_no, request_timeout=10):
     br = mechanize.Browser()
     br.set_handle_refresh(False)
     try:
-        br.open('https://parivahan.gov.in/rcdlstatus/vahan/rcstatus.xhtml',
-                timeout=request_timeout)
+        res = br.open('https://parivahan.gov.in/rcdlstatus/vahan/rcstatus.xhtml',
+                      timeout=request_timeout)
     except URLError as e:
         raise ParivahanTimeOutException(e.message)
 
-    br.select_form('convVeh_Form')
-    br.form['convVeh_Form:tf_reg_no1'] = reg_match.group(1).upper()
-    br.form['convVeh_Form:tf_reg_no2'] = reg_match.group(2)
+    captcha = _get_captcha(res.get_data(), captcha_api_key)
+
+    br.select_form('rc_Form')
+    br.form['rc_Form:tf_reg_no1'] = reg_match.group(1).upper()
+    br.form['rc_Form:tf_reg_no2'] = reg_match.group(2)
+    br.form['rc_Form:j_idt26:CaptchaID'] = captcha
 
     res = br.submit()
+
     soup = BeautifulSoup(res.get_data(), 'lxml')
-    table_rows = soup.table.find_all('tr')
 
     data = {}
+    div = soup.find('div', id='rc_Form:rcPanel')
+    table = div.find('table')
+    table_rows = table.find_all('tr')
+
     for row in table_rows:
         table_columns = row.find_all('td')
         for i in xrange(0, len(table_columns), 2):
@@ -73,7 +97,7 @@ def get_parivahan_data(registration_no, request_timeout=10):
     return data
 
 
-def is_vehicle_stolen(registration_no, request_timeout=10):
+def is_vehicle_stolen(registration_no, captcha_api_key, request_timeout=10):
 
     # is_valid() checks if vehicle_type is a substring of vehicle types found on samanvay website
     # vehicle_class() gets a list of html select option and filters them who are `is_valid`
@@ -81,7 +105,7 @@ def is_vehicle_stolen(registration_no, request_timeout=10):
     is_valid = lambda x: x.text.strip() in vehicle_type
     vehicle_class = lambda xx: (filter(is_valid, xx) or [None])[0]
 
-    registration_details = get_parivahan_data(registration_no)
+    registration_details = get_parivahan_data(registration_no, captcha_api_key)
     owner = registration_details.get('owner_name')
     chassis_no = registration_details.get('chasi_no')
     engine_no = registration_details.get('engine_no')
