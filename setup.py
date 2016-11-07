@@ -6,7 +6,8 @@ from setuptools import setup
 requirements = [
     "mechanize",
     "bs4",
-    "lxml"
+    "lxml",
+    "get-captcha"
 ]
 
 setup(

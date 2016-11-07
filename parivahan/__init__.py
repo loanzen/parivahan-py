@@ -63,7 +63,9 @@ def get_parivahan_data(registration_no, captcha_api_key, request_timeout=10):
     br.select_form('rc_Form')
     br.form['rc_Form:tf_reg_no1'] = reg_match.group(1).upper()
     br.form['rc_Form:tf_reg_no2'] = reg_match.group(2)
-    br.form['rc_Form:j_idt26:CaptchaID'] = captcha
+
+    ctrl = br.form.find_control(type='text', predicate=lambda x: 'CaptchaID' in x.id)  # get captcha text input
+    br.form[ctrl.attrs.get('name')] = captcha
 
     res = br.submit()
 
